@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="Mediametrie_appModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ContainerRelations">
+          <Key>
+            <PropertyRef Name="RelationID" />
+          </Key>
+          <Property Name="ContainerID" Type="int" Nullable="false" />
+          <Property Name="TaskID" Type="int" Nullable="false" />
+          <Property Name="RelationID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Containers">
+          <Key>
+            <PropertyRef Name="ContainerID" />
+          </Key>
+          <Property Name="ContainerID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ContainerName" Type="varchar" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="Tasks">
+          <Key>
+            <PropertyRef Name="TaskID" />
+          </Key>
+          <Property Name="TaskID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TaskName" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="TaskPriority" Type="int" />
+          <Property Name="ValidationStatus" Type="bit" Nullable="false" />
+          <Property Name="CreationDate" Type="date" />
+          <Property Name="DeadLineDate" Type="date" />
+          <Property Name="ValidationDate" Type="date" />
+        </EntityType>
+        <Association Name="FK__Container__Conta__2B3F6F97">
+          <End Role="Containers" Type="Self.Containers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ContainerRelations" Type="Self.ContainerRelations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Containers">
+              <PropertyRef Name="ContainerID" />
+            </Principal>
+            <Dependent Role="ContainerRelations">
+              <PropertyRef Name="ContainerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Container__TaskI__2C3393D0">
+          <End Role="Tasks" Type="Self.Tasks" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ContainerRelations" Type="Self.ContainerRelations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tasks">
+              <PropertyRef Name="TaskID" />
+            </Principal>
+            <Dependent Role="ContainerRelations">
+              <PropertyRef Name="TaskID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Mediametrie_appModelStoreContainer">
+          <EntitySet Name="ContainerRelations" EntityType="Self.ContainerRelations" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Containers" EntityType="Self.Containers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tasks" EntityType="Self.Tasks" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Container__Conta__2B3F6F97" Association="Self.FK__Container__Conta__2B3F6F97">
+            <End Role="Containers" EntitySet="Containers" />
+            <End Role="ContainerRelations" EntitySet="ContainerRelations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Container__TaskI__2C3393D0" Association="Self.FK__Container__TaskI__2C3393D0">
+            <End Role="Tasks" EntitySet="Tasks" />
+            <End Role="ContainerRelations" EntitySet="ContainerRelations" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Mediametrie_appModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="ContainerRelations">
+          <Key>
+            <PropertyRef Name="RelationID" />
+          </Key>
+          <Property Name="ContainerID" Type="Int32" Nullable="false" />
+          <Property Name="TaskID" Type="Int32" Nullable="false" />
+          <Property Name="RelationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Containers" Relationship="Self.FK__Container__Conta__2B3F6F97" FromRole="ContainerRelations" ToRole="Containers" />
+          <NavigationProperty Name="Tasks" Relationship="Self.FK__Container__TaskI__2C3393D0" FromRole="ContainerRelations" ToRole="Tasks" />
+        </EntityType>
+        <EntityType Name="Containers">
+          <Key>
+            <PropertyRef Name="ContainerID" />
+          </Key>
+          <Property Name="ContainerID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ContainerName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="ContainerRelations" Relationship="Self.FK__Container__Conta__2B3F6F97" FromRole="Containers" ToRole="ContainerRelations" />
+        </EntityType>
+        <EntityType Name="Tasks">
+          <Key>
+            <PropertyRef Name="TaskID" />
+          </Key>
+          <Property Name="TaskID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TaskName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TaskPriority" Type="Int32" />
+          <Property Name="ValidationStatus" Type="Boolean" Nullable="false" />
+          <Property Name="CreationDate" Type="DateTime" Precision="0" />
+          <Property Name="DeadLineDate" Type="DateTime" Precision="0" />
+          <Property Name="ValidationDate" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="ContainerRelations" Relationship="Self.FK__Container__TaskI__2C3393D0" FromRole="Tasks" ToRole="ContainerRelations" />
+        </EntityType>
+        <Association Name="FK__Container__Conta__2B3F6F97">
+          <End Role="Containers" Type="Self.Containers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ContainerRelations" Type="Self.ContainerRelations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Containers">
+              <PropertyRef Name="ContainerID" />
+            </Principal>
+            <Dependent Role="ContainerRelations">
+              <PropertyRef Name="ContainerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Container__TaskI__2C3393D0">
+          <End Role="Tasks" Type="Self.Tasks" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ContainerRelations" Type="Self.ContainerRelations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tasks">
+              <PropertyRef Name="TaskID" />
+            </Principal>
+            <Dependent Role="ContainerRelations">
+              <PropertyRef Name="TaskID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Mediametrie_appEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ContainerRelations" EntityType="Self.ContainerRelations" />
+          <EntitySet Name="Containers" EntityType="Self.Containers" />
+          <EntitySet Name="Tasks" EntityType="Self.Tasks" />
+          <AssociationSet Name="FK__Container__Conta__2B3F6F97" Association="Self.FK__Container__Conta__2B3F6F97">
+            <End Role="Containers" EntitySet="Containers" />
+            <End Role="ContainerRelations" EntitySet="ContainerRelations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Container__TaskI__2C3393D0" Association="Self.FK__Container__TaskI__2C3393D0">
+            <End Role="Tasks" EntitySet="Tasks" />
+            <End Role="ContainerRelations" EntitySet="ContainerRelations" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Mediametrie_appModelStoreContainer" CdmEntityContainer="Mediametrie_appEntities">
+          <EntitySetMapping Name="ContainerRelations">
+            <EntityTypeMapping TypeName="Mediametrie_appModel.ContainerRelations">
+              <MappingFragment StoreEntitySet="ContainerRelations">
+                <ScalarProperty Name="ContainerID" ColumnName="ContainerID" />
+                <ScalarProperty Name="TaskID" ColumnName="TaskID" />
+                <ScalarProperty Name="RelationID" ColumnName="RelationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Containers">
+            <EntityTypeMapping TypeName="Mediametrie_appModel.Containers">
+              <MappingFragment StoreEntitySet="Containers">
+                <ScalarProperty Name="ContainerID" ColumnName="ContainerID" />
+                <ScalarProperty Name="ContainerName" ColumnName="ContainerName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tasks">
+            <EntityTypeMapping TypeName="Mediametrie_appModel.Tasks">
+              <MappingFragment StoreEntitySet="Tasks">
+                <ScalarProperty Name="TaskID" ColumnName="TaskID" />
+                <ScalarProperty Name="TaskName" ColumnName="TaskName" />
+                <ScalarProperty Name="TaskPriority" ColumnName="TaskPriority" />
+                <ScalarProperty Name="ValidationStatus" ColumnName="ValidationStatus" />
+                <ScalarProperty Name="CreationDate" ColumnName="CreationDate" />
+                <ScalarProperty Name="DeadLineDate" ColumnName="DeadLineDate" />
+                <ScalarProperty Name="ValidationDate" ColumnName="ValidationDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,99 @@
+﻿<Window x:Class="WpfApplication3.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApplication3"
+        mc:Ignorable="d"
+        Title="Task Planner" Height="350" Width="550" Loaded="Window_Loaded" ResizeMode="CanResizeWithGrip"  MinHeight="350" MinWidth="550">
+    <Window.Resources>
+        <CollectionViewSource x:Key="tasksViewSource" d:DesignSource="{d:DesignInstance {x:Type local:Tasks}, CreateList=True}"/>
+    </Window.Resources>
+    <Grid DataContext="{StaticResource tasksViewSource}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="420*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32*" MaxHeight="32"></RowDefinition>
+            <RowDefinition Height="252*"></RowDefinition>
+            <RowDefinition Height="35*" MaxHeight="35"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Button x:Name="closeButton" Content="Close" Width="74" HorizontalAlignment="Right" VerticalAlignment="Top" Click="closeButton_Click" Margin="0,3,10,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2"/>
+        <Button x:Name="newTaskButton" Content="New Task" Width="74" HorizontalAlignment="Left" VerticalAlignment="Top" Click="newTaskButton_Click" Margin="103,3,0,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2"/>
+        <Button x:Name="addContainerButton" Content="Add Container" Width="90" VerticalAlignment="Top" Click="addContainerButton_Click" Margin="10,3,0,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2" HorizontalAlignment="Left"/>
+        <DataGrid x:Name="tasksDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding}" RowDetailsVisibilityMode="VisibleWhenSelected" RowEditEnding="OnRowEditEnding" Grid.Row="1" Margin="10" CanUserAddRows="False" CanUserDeleteRows="false">
+            <DataGrid.Columns>
+                <DataGridTextColumn x:Name="taskNameColumn" Binding="{Binding TaskName}" Header="Task Name" Width="*" MinWidth="200"/>
+                <DataGridTextColumn x:Name="taskPriorityColumn" Binding="{Binding TaskPriority}" Header="Priority" Width="50" MinWidth="50">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                        <Grid Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"
+                                          HorizontalAlignment="Center" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="HorizontalContentAlignment"
+                 Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
+                <DataGridTemplateColumn x:Name="DeadLineDateColumn"  Header="Deadline Date" Width="125" MinWidth="125" CanUserSort="True">
+                    <DataGridTemplateColumn.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                        <Grid Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"
+                                          HorizontalAlignment="Center" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="HorizontalContentAlignment"
+                 Value="Center" />
+                        </Style>
+                    </DataGridTemplateColumn.CellStyle>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DeadLineDate, StringFormat='dd/MM/yyyy'}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding DeadLineDate, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" Width="125"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridCheckBoxColumn x:Name="validationStatusColumn" Binding="{Binding ValidationStatus}" Header="Validation Status" Width="100" MinWidth="100">
+                    <DataGridCheckBoxColumn.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                        <Grid Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"
+                                          HorizontalAlignment="Center" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="HorizontalContentAlignment"
+                 Value="Center" />
+                        </Style>
+                    </DataGridCheckBoxColumn.CellStyle>
+                </DataGridCheckBoxColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <ComboBox x:Name="ContainerDropdown" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Bottom" Width="198" SelectedIndex="0" MaxHeight="22" SelectionChanged="ContainerDropdown_SelectionChanged">
+            <ComboBoxItem Name="cdi1">Boîte de réception</ComboBoxItem>
+            <ComboBoxItem Name="cdi2">Tâches prioritaires</ComboBoxItem>
+            <ComboBoxItem Name="cdi3">Tâches de la journée</ComboBoxItem>
+        </ComboBox>
+    </Grid>
+</Window>
