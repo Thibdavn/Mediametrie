@@ -69,8 +69,8 @@ namespace WpfApplication3
             //SelectedTasks = _context.Tasks.Local.Where(t => t.DeadLineDate == DateTime.Today);
             //SelectedTasks = _context.Tasks.Local.Where(t => t.TaskPriority >= 3);
 
-            tasksViewSource.Source = SelectedTasks;
             RefreshComboBox();
+            RefreshtasksView();
             InitializeComponent();
         }
 
@@ -78,7 +78,7 @@ namespace WpfApplication3
         {
             _context.Containers.Load();
             SelectedContainers = _context.Containers.Local;
-            for (int i = 3; i <= ContainerDropdown.Items.Count - 1; i++)
+            for (int i = ContainerDropdown.Items.Count - 1; i > 2; i--)
             {
                 ContainerDropdown.Items.RemoveAt(i);
             }
@@ -97,6 +97,7 @@ namespace WpfApplication3
 
             DeleteRelationButton.Visibility = System.Windows.Visibility.Hidden;
             addRelationButton.Visibility = System.Windows.Visibility.Hidden;
+            deleteContainerButton.Visibility = System.Windows.Visibility.Hidden;
             if (ContainerDropdown.SelectedItem == cdi1)
                 SelectedTasks = _context.Tasks.Local;
             else if (ContainerDropdown.SelectedItem == cdi2)
@@ -106,6 +107,7 @@ namespace WpfApplication3
             else
             {
                 _context.ContainerRelations.Load();
+                _context.Containers.Load();
                 SelectedContainers = _context.Containers.Local;
                 SelectedTasks = Enumerable.Empty<Tasks>();
                 foreach (Containers container in SelectedContainers.Where(s => s.ContainerID == ((ComboboxItem)ContainerDropdown.SelectedItem).Id))
@@ -117,6 +119,7 @@ namespace WpfApplication3
                 }
                 DeleteRelationButton.Visibility = System.Windows.Visibility.Visible;
                 addRelationButton.Visibility = System.Windows.Visibility.Visible;
+                deleteContainerButton.Visibility = System.Windows.Visibility.Visible;
             }
             tasksViewSource.Source = SelectedTasks;
         }
@@ -173,8 +176,18 @@ namespace WpfApplication3
             {
                 _context.Database.ExecuteSqlCommand("INSERT INTO dbo.Containers (ContainerName) VALUES ('" + dialog.ResponseText + "');");
                 RefreshComboBox();
+                ContainerDropdown.SelectedIndex = ContainerDropdown.Items.Count - 1;
+                //RefreshtasksView();
             }
-            ContainerDropdown.SelectedIndex = ContainerDropdown.Items.Count - 1;
+        }
+
+        private void deleteContainerButton_Click(object sender, RoutedEventArgs e)
+        {
+            _context.Containers.Remove(_context.Containers.Where(r => r.ContainerID == ((ComboboxItem)ContainerDropdown.SelectedItem).Id).First());
+            _context.SaveChanges();
+            ContainerDropdown.SelectedIndex = 0;
+            RefreshComboBox();
+            RefreshtasksView();
         }
 
         private void deleteTaskButton_Click(object sender, RoutedEventArgs e)
