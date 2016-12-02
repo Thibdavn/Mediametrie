@@ -58,7 +58,7 @@ namespace WpfApplication3
             System.Windows.Data.CollectionViewSource tasksViewSource = ((System.Windows.Data.CollectionViewSource)(this.FindResource("tasksViewSource")));
             // Load data by setting the CollectionViewSource.Source property:
             // tasksViewSource.Source = [generic data source]
-
+            
             _context.Tasks.Load();
             _context.Containers.Load();
             _context.ContainerRelations.Load();
@@ -122,11 +122,15 @@ namespace WpfApplication3
                 deleteContainerButton.Visibility = System.Windows.Visibility.Visible;
             }
             tasksViewSource.Source = SelectedTasks;
+            ICollection<Tasks> listcount = SelectedTasks as ICollection<Tasks>;
+            if(taskNumber != null)
+            taskNumber.Text = "" + listcount.Count + " Tasks(s)";
         }
 
         private void ContainerDropdown_SelectionChanged(object sender, System.EventArgs e)
         {
-            RefreshtasksView();
+            if (ContainerDropdown.SelectedIndex != -1)
+                RefreshtasksView();
         }
 
         private void OnRowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
@@ -154,9 +158,14 @@ namespace WpfApplication3
 
         private void newTaskButton_Click(object sender, RoutedEventArgs e)
         {
-            _context.Database.ExecuteSqlCommand("INSERT INTO dbo.Tasks (TaskName, TaskPriority) VALUES ('Nouvelle tâche', 1);");
-            if (ContainerDropdown.SelectedIndex > 2)
+            if (ContainerDropdown.SelectedIndex == 1)
+                _context.Database.ExecuteSqlCommand("INSERT INTO dbo.Tasks (TaskName, TaskPriority) VALUES ('Nouvelle tâche', 4);");
+            else if (ContainerDropdown.SelectedIndex == 2)
+                _context.Database.ExecuteSqlCommand("INSERT INTO dbo.Tasks (TaskName, TaskPriority, DeadLineDate) VALUES ('Nouvelle tâche', 1, GETDATE());");
+            else if (ContainerDropdown.SelectedIndex > 2)
                 _context.Database.ExecuteSqlCommand("INSERT INTO dbo.ContainerRelations (TaskID, ContainerID) SELECT MAX(Tasks.TaskID), " + ((ComboboxItem)ContainerDropdown.SelectedItem).Id + " FROM Tasks, Containers;");
+            else
+                _context.Database.ExecuteSqlCommand("INSERT INTO dbo.Tasks (TaskName, TaskPriority) VALUES ('Nouvelle tâche', 1);");
             _context.Tasks.Load();
             RefreshtasksView();
         }
@@ -166,6 +175,9 @@ namespace WpfApplication3
             Window1 win1 = new Window1(_context, ((ComboboxItem)ContainerDropdown.SelectedItem).Id) { Owner = this};
             win1.ShowDialog();
             RefreshtasksView();
+            int temp = ContainerDropdown.SelectedIndex;
+            RefreshComboBox();
+            ContainerDropdown.SelectedIndex = temp;
         }
 
         private void addContainerButton_Click(object sender, RoutedEventArgs e)
@@ -177,7 +189,6 @@ namespace WpfApplication3
                 _context.Database.ExecuteSqlCommand("INSERT INTO dbo.Containers (ContainerName) VALUES ('" + dialog.ResponseText + "');");
                 RefreshComboBox();
                 ContainerDropdown.SelectedIndex = ContainerDropdown.Items.Count - 1;
-                //RefreshtasksView();
             }
         }
 
@@ -208,6 +219,24 @@ namespace WpfApplication3
                 _context.ContainerRelations.Remove(_context.ContainerRelations.Where(r => r.TaskID == task.TaskID && r.ContainerID == ((ComboboxItem)ContainerDropdown.SelectedItem).Id).First());
             _context.SaveChanges();
             RefreshtasksView();
+        }
+
+        private void searchGoButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Data.CollectionViewSource tasksViewSource = ((System.Windows.Data.CollectionViewSource)(this.FindResource("tasksViewSource")));
+
+            SelectedTasks = SelectedTasks.Where(t => t.TaskName == searchBox.Text);
+            tasksViewSource.Source = SelectedTasks;
+            if (searchBox.Text == "")
+                RefreshtasksView();
+        }
+
+        private void searchBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                searchGoButton_Click(this, new System.Windows.RoutedEventArgs());
+            }
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApplication3"
         mc:Ignorable="d"
-        Title="Task Planner" Height="350" Width="550" Loaded="Window_Loaded" ResizeMode="CanResizeWithGrip"  MinHeight="350" MinWidth="550">
+        Title="Task Planner" Height="500" Width="750" Loaded="Window_Loaded" ResizeMode="CanResizeWithGrip"  MinHeight="500" MinWidth="750">
     <Window.Resources>
         <CollectionViewSource x:Key="tasksViewSource" d:DesignSource="{d:DesignInstance {x:Type local:Tasks}, CreateList=True}"/>
     </Window.Resources>
@@ -20,14 +20,20 @@
         </Grid.RowDefinitions>
         <Button x:Name="closeButton" Content="Close" Width="74" HorizontalAlignment="Right" VerticalAlignment="Top" Click="closeButton_Click" Margin="0,3,10,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2"/>
         <Button x:Name="newTaskButton" Content="New Task" Width="74" HorizontalAlignment="Left" VerticalAlignment="Top" Click="newTaskButton_Click" Margin="10,3,0,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2"/>
-        <Button x:Name="addContainerButton" Content="Add Container" Width="90" VerticalAlignment="Top" Click="addContainerButton_Click" Height="21" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="213,10,0,0" Grid.Row="0"/>
-        <Button x:Name="deleteContainerButton" Content="Delete Container" Width="90" VerticalAlignment="Top" Click="deleteContainerButton_Click" Height="21" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="308,10,0,0" Grid.Row="0"/>
+        <Button x:Name="addContainerButton" Content="Add Container" Width="90" VerticalAlignment="Top" Click="addContainerButton_Click" Height="21" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="273,10,0,0" Grid.Row="0"/>
+        <Button x:Name="deleteContainerButton" Content="Delete Container" Width="100" VerticalAlignment="Top" Click="deleteContainerButton_Click" Height="21" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="368,10,0,0" Grid.Row="0"/>
         <Button x:Name="DeleteTaskButton" Content="Delete Task" Width="74" VerticalAlignment="Top" Click="deleteTaskButton_Click" Margin="89,3,0,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2" HorizontalAlignment="Left"/>
-        <Button x:Name="DeleteRelationButton" Content="Delete Task From Container" Width="155" VerticalAlignment="Top" Click="deleteRelationButton_Click" Margin="168,3,0,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2" HorizontalAlignment="Left"/>
-        <Button x:Name="addRelationButton" Content="Add Task To Container" Width="125" VerticalAlignment="Top" Click="addRelationButton_Click" Margin="328,3,0,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2" HorizontalAlignment="Left"/>
+        <Button x:Name="DeleteRelationButton" Content="Delete Task From Container" Width="154" VerticalAlignment="Top" Click="deleteRelationButton_Click" Margin="301,3,0,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2" HorizontalAlignment="Left"/>
+        <Button x:Name="addRelationButton" Content="Edit Container" Width="83" VerticalAlignment="Top" Click="addRelationButton_Click" Margin="213,3,0,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2" HorizontalAlignment="Left"/>
         <DataGrid x:Name="tasksDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding}" RowDetailsVisibilityMode="VisibleWhenSelected" RowEditEnding="OnRowEditEnding" Grid.Row="1" Margin="10" CanUserAddRows="False" CanUserDeleteRows="false">
             <DataGrid.Columns>
-                <DataGridTextColumn x:Name="taskNameColumn" Binding="{Binding TaskName}" Header="Task Name" Width="*" MinWidth="200"/>
+                <DataGridTextColumn x:Name="taskNameColumn" Binding="{Binding TaskName}" Header="Task Name" Width="*" MinWidth="200">
+                    <DataGridTextColumn.EditingElementStyle>
+                        <Style TargetType="{x:Type TextBox}">
+                            <Setter Property="MaxLength" Value="500"/>
+                        </Style>
+                    </DataGridTextColumn.EditingElementStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn x:Name="taskPriorityColumn" Binding="{Binding TaskPriority}" Header="Priority" Width="50" MinWidth="50">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
@@ -94,10 +100,13 @@
                 </DataGridCheckBoxColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <ComboBox x:Name="ContainerDropdown" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Bottom" Width="198" SelectedIndex="0" MaxHeight="22" SelectionChanged="ContainerDropdown_SelectionChanged">
-            <ComboBoxItem Name="cdi1">Boîte de réception</ComboBoxItem>
-            <ComboBoxItem Name="cdi2">Tâches prioritaires</ComboBoxItem>
-            <ComboBoxItem Name="cdi3">Tâches de la journée</ComboBoxItem>
+        <ComboBox x:Name="ContainerDropdown" HorizontalAlignment="Left" Margin="10,0,0,1" VerticalAlignment="Bottom" Width="198" SelectedIndex="0" MaxHeight="21" SelectionChanged="ContainerDropdown_SelectionChanged">
+            <ComboBoxItem Name="cdi1">Inbox</ComboBoxItem>
+            <ComboBoxItem Name="cdi2">High priority tasks</ComboBoxItem>
+            <ComboBoxItem Name="cdi3">Today's tasks</ComboBoxItem>
         </ComboBox>
+        <TextBox x:Name="searchBox" HorizontalAlignment="Right" Height="21" Margin="0,10,10,0" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top" Width="179" VerticalContentAlignment="Center" KeyDown="searchBox_KeyDown"/>
+        <Button x:Name="searchGoButton" Content="Go" Width="25" VerticalAlignment="Top" Click="searchGoButton_Click" Height="21" HorizontalContentAlignment="Center" HorizontalAlignment="Right" Margin="0,10,10,0" Grid.Row="0"/>
+        <TextBlock x:Name="taskNumber" HorizontalAlignment="Left" Margin="213,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="55" TextAlignment="Center" UseLayoutRounding="True"><Run Text="60 Task"/><Run Text="("/><Run Text="s"/><Run Text=")"/></TextBlock>
     </Grid>
 </Window>

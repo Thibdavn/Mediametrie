@@ -14,10 +14,11 @@
             <ColumnDefinition Width="420*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="252*"></RowDefinition>
+            <RowDefinition Height="32"></RowDefinition>
+            <RowDefinition Height="252*"/>
             <RowDefinition Height="35*" MaxHeight="35"></RowDefinition>
         </Grid.RowDefinitions>
-        <DataGrid x:Name="tasksDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding}" RowDetailsVisibilityMode="VisibleWhenSelected" Margin="10,10,10,42" CanUserAddRows="False" IsReadOnly="true" Grid.RowSpan="2" CanUserDeleteRows="False">
+        <DataGrid x:Name="tasksDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding}" RowDetailsVisibilityMode="VisibleWhenSelected" Margin="10,10,10,7" CanUserAddRows="False" IsReadOnly="true" CanUserDeleteRows="False" Grid.Row="1">
             <DataGrid.Columns>
                 <DataGridTextColumn x:Name="taskNameColumn" Binding="{Binding TaskName}" Header="Task Name" Width="*" MinWidth="200"/>
                 <DataGridTextColumn x:Name="taskPriorityColumn" Binding="{Binding TaskPriority}" Header="Priority" Width="50" MinWidth="50">
@@ -86,7 +87,8 @@
                 </DataGridCheckBoxColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="addContainerButton" Content="Add to Container" Width="110" VerticalAlignment="Top" Click="addContainerButton_Click" Margin="10,3,0,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="1" HorizontalAlignment="Left"/>
-        <Button x:Name="closeButton" Content="Close" Width="74" HorizontalAlignment="Right" VerticalAlignment="Top" Click="closeButton_Click" Margin="0,3,10,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="1"/>
+        <Button x:Name="addContainerButton" Content="Add to Container" Width="110" VerticalAlignment="Top" Click="addContainerButton_Click" Margin="10,3,0,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2" HorizontalAlignment="Left"/>
+        <Button x:Name="closeButton" Content="OK" Width="74" HorizontalAlignment="Right" VerticalAlignment="Top" Click="closeButton_Click" Margin="0,3,10,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2"/>
+        <TextBox x:Name="currentContainer" HorizontalAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="171" Grid.RowSpan="2" Margin="0,10,0,0" VerticalContentAlignment="Center" KeyDown="currentContainer_KeyDown"/>
     </Grid>
 </Window>

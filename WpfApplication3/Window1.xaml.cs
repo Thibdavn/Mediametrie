@@ -29,6 +29,8 @@ namespace WpfApplication3
 
         public int ContainerID;
 
+        public Containers PassedContainer;
+
         public Window1(Mediametrie_appEntities PassedContext, int PassedContainerID)
         {
             InitializeComponent();
@@ -46,6 +48,8 @@ namespace WpfApplication3
             SelectedContainerRelationsAdd = _context.ContainerRelations.Local;
             SelectedTasksAdd = _context.Tasks.Local;
             RefreshAddtasksView();
+            PassedContainer = _context.Containers.First(s => s.ContainerID == ContainerID);
+            currentContainer.Text = PassedContainer.ContainerName;
         }
 
         public void RefreshAddtasksView()
@@ -79,7 +83,26 @@ namespace WpfApplication3
 
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
+            PassedContainer.ContainerName = currentContainer.Text;
+            _context.SaveChanges();
             this.Close();
+        }
+
+        private void currentContainer_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                PassedContainer.ContainerName = currentContainer.Text;
+                _context.SaveChanges();
+                closeButton_Click(this, new System.Windows.RoutedEventArgs());
+            }
+        }
+
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            PassedContainer.ContainerName = currentContainer.Text;
+            _context.SaveChanges();
+            base.OnClosing(e);
         }
     }
 }

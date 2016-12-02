@@ -34,5 +34,13 @@ namespace WpfApplication3
         {
             DialogResult = true;
         }
+
+        private void ResponseTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                OKButton_Click(this, new System.Windows.RoutedEventArgs());
+            }
+        }
     }
 }
