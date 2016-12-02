@@ -19,8 +19,11 @@
             <RowDefinition Height="35*" MaxHeight="35"></RowDefinition>
         </Grid.RowDefinitions>
         <Button x:Name="closeButton" Content="Close" Width="74" HorizontalAlignment="Right" VerticalAlignment="Top" Click="closeButton_Click" Margin="0,3,10,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2"/>
-        <Button x:Name="newTaskButton" Content="New Task" Width="74" HorizontalAlignment="Left" VerticalAlignment="Top" Click="newTaskButton_Click" Margin="103,3,0,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2"/>
-        <Button x:Name="addContainerButton" Content="Add Container" Width="90" VerticalAlignment="Top" Click="addContainerButton_Click" Margin="10,3,0,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2" HorizontalAlignment="Left"/>
+        <Button x:Name="newTaskButton" Content="New Task" Width="74" HorizontalAlignment="Left" VerticalAlignment="Top" Click="newTaskButton_Click" Margin="10,3,0,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2"/>
+        <Button x:Name="addContainerButton" Content="Add Container" Width="90" VerticalAlignment="Top" Click="addContainerButton_Click" Height="21" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="213,10,0,0" Grid.Row="0"/>
+        <Button x:Name="DeleteTaskButton" Content="Delete Task" Width="74" VerticalAlignment="Top" Click="deleteTaskButton_Click" Margin="89,3,0,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2" HorizontalAlignment="Left"/>
+        <Button x:Name="DeleteRelationButton" Content="Delete Task From Container" Width="155" VerticalAlignment="Top" Click="deleteRelationButton_Click" Margin="168,3,0,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2" HorizontalAlignment="Left"/>
+        <Button x:Name="addRelationButton" Content="Add Task To Container" Width="125" VerticalAlignment="Top" Click="addRelationButton_Click" Margin="328,3,0,0" Height="22" HorizontalContentAlignment="Center" Grid.Row="2" HorizontalAlignment="Left"/>
         <DataGrid x:Name="tasksDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding}" RowDetailsVisibilityMode="VisibleWhenSelected" RowEditEnding="OnRowEditEnding" Grid.Row="1" Margin="10" CanUserAddRows="False" CanUserDeleteRows="false">
             <DataGrid.Columns>
                 <DataGridTextColumn x:Name="taskNameColumn" Binding="{Binding TaskName}" Header="Task Name" Width="*" MinWidth="200"/>

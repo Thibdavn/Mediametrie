@@ -70,6 +70,18 @@ namespace WpfApplication3
             //SelectedTasks = _context.Tasks.Local.Where(t => t.TaskPriority >= 3);
 
             tasksViewSource.Source = SelectedTasks;
+            RefreshComboBox();
+            InitializeComponent();
+        }
+
+        public void RefreshComboBox()
+        {
+            _context.Containers.Load();
+            SelectedContainers = _context.Containers.Local;
+            for (int i = 3; i <= ContainerDropdown.Items.Count - 1; i++)
+            {
+                ContainerDropdown.Items.RemoveAt(i);
+            }
             foreach (Containers container in SelectedContainers)
             {
                 ComboboxItem temp = new ComboboxItem();
@@ -77,13 +89,14 @@ namespace WpfApplication3
                 temp.Id = container.ContainerID;
                 ContainerDropdown.Items.Add(temp);
             }
-            InitializeComponent();
         }
 
         public void RefreshtasksView()
         {
             System.Windows.Data.CollectionViewSource tasksViewSource = ((System.Windows.Data.CollectionViewSource)(this.FindResource("tasksViewSource")));
 
+            DeleteRelationButton.Visibility = System.Windows.Visibility.Hidden;
+            addRelationButton.Visibility = System.Windows.Visibility.Hidden;
             if (ContainerDropdown.SelectedItem == cdi1)
                 SelectedTasks = _context.Tasks.Local;
             else if (ContainerDropdown.SelectedItem == cdi2)
@@ -92,6 +105,8 @@ namespace WpfApplication3
                 SelectedTasks = _context.Tasks.Local.Where(t => t.DeadLineDate == DateTime.Today).ToList();
             else
             {
+                _context.ContainerRelations.Load();
+                SelectedContainers = _context.Containers.Local;
                 SelectedTasks = Enumerable.Empty<Tasks>();
                 foreach (Containers container in SelectedContainers.Where(s => s.ContainerID == ((ComboboxItem)ContainerDropdown.SelectedItem).Id))
                 {
@@ -100,30 +115,11 @@ namespace WpfApplication3
                         SelectedTasks = SelectedTasks.Concat(_context.Tasks.Local.Where(t => t.TaskID == relation.Tasks.TaskID)).ToList();
                     }
                 }
+                DeleteRelationButton.Visibility = System.Windows.Visibility.Visible;
+                addRelationButton.Visibility = System.Windows.Visibility.Visible;
             }
             tasksViewSource.Source = SelectedTasks;
         }
-
-       /* private void BindTotasksView()
-        {
-            System.Windows.Data.CollectionViewSource tasksViewSource = ((System.Windows.Data.CollectionViewSource)(this.FindResource("tasksViewSource")));
-
-            if (ContainerDropdown.SelectedItem == cdi2)
-                SelectedTasks = _context.Tasks.Local.Where(t => t.TaskPriority >= 3).ToList();
-            else if (ContainerDropdown.SelectedItem == cdi3)
-                SelectedTasks = _context.Tasks.Local.Where(t => t.DeadLineDate == DateTime.Today).ToList();
-            else
-            {
-                SelectedTasks = Enumerable.Empty<Tasks>();
-                foreach (Containers container in SelectedContainers.Where(s => s.ContainerID == ((ComboboxItem)ContainerDropdown.SelectedItem).Id))
-                {
-                    foreach (ContainerRelations relation in container.ContainerRelations)
-                    {
-                        SelectedTasks = SelectedTasks.Concat(_context.Tasks.Local.Where(t => t.TaskID == relation.Tasks.TaskID)).ToList();
-                    }
-                }
-            }
-        }*/
 
         private void ContainerDropdown_SelectionChanged(object sender, System.EventArgs e)
         {
@@ -140,10 +136,6 @@ namespace WpfApplication3
                 {
                     this.Dispatcher.BeginInvoke(new DispatcherOperationCallback(param =>
                     {
-                        // This callback will be called after the CollectionView
-                        // has pushed the changes back to the DataGrid.ItemSource.
-
-                        // Write code here to save the data to the database.
                         _context.SaveChanges();
                         RefreshtasksView();
                         return null;
@@ -160,14 +152,48 @@ namespace WpfApplication3
         private void newTaskButton_Click(object sender, RoutedEventArgs e)
         {
             _context.Database.ExecuteSqlCommand("INSERT INTO dbo.Tasks (TaskName, TaskPriority) VALUES ('Nouvelle tâche', 1);");
-            //BindTotasksView();
+            if (ContainerDropdown.SelectedIndex > 2)
+                _context.Database.ExecuteSqlCommand("INSERT INTO dbo.ContainerRelations (TaskID, ContainerID) SELECT MAX(Tasks.TaskID), " + ((ComboboxItem)ContainerDropdown.SelectedItem).Id + " FROM Tasks, Containers;");
             _context.Tasks.Load();
             RefreshtasksView();
         }
-        private void addContainerButton_Click(object sender, RoutedEventArgs e)
+
+        private void addRelationButton_Click(object sender, RoutedEventArgs e)
         {
             Window1 win1 = new Window1(_context, ((ComboboxItem)ContainerDropdown.SelectedItem).Id) { Owner = this};
             win1.ShowDialog();
+            RefreshtasksView();
+        }
+
+        private void addContainerButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Window2();
+
+            if (dialog.ShowDialog() == true)
+            {
+                _context.Database.ExecuteSqlCommand("INSERT INTO dbo.Containers (ContainerName) VALUES ('" + dialog.ResponseText + "');");
+                RefreshComboBox();
+            }
+            ContainerDropdown.SelectedIndex = ContainerDropdown.Items.Count - 1;
+        }
+
+        private void deleteTaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Collections.IList items = (System.Collections.IList)tasksDataGrid.SelectedItems;
+            var collection = items.Cast<WpfApplication3.Tasks>();
+            foreach (WpfApplication3.Tasks task in collection.ToList())
+                _context.Tasks.Remove(task);
+            _context.SaveChanges();
+            RefreshtasksView();
+        }
+
+        private void deleteRelationButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Collections.IList items = (System.Collections.IList)tasksDataGrid.SelectedItems;
+            var collection = items.Cast<WpfApplication3.Tasks>();
+            foreach (WpfApplication3.Tasks task in collection.ToList())
+                _context.ContainerRelations.Remove(_context.ContainerRelations.Where(r => r.TaskID == task.TaskID && r.ContainerID == ((ComboboxItem)ContainerDropdown.SelectedItem).Id).First());
+            _context.SaveChanges();
             RefreshtasksView();
         }
 
